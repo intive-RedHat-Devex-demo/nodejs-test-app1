@@ -1,0 +1,29 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: nodejs-test-app1-el
+  namespace: demo-dev
+  labels:
+    janus-idp.io/tekton: nodejs-test-app1
+spec:
+  # serviceAccountName: pipeline
+  triggers:
+    - bindings:
+        - kind: ClusterTriggerBinding
+          ref: github-pullreq
+      interceptors:
+        - params:
+            - name: eventTypes
+              value: ['pull_request']
+          ref:
+            name: github
+        - params:
+            - name: git-revision
+              value: >-
+                (body.ref.contains('main'))
+            - name: overlays
+              value: null
+          ref:
+            name: cel
+      template:
+        ref: nodejs-test-app1-run-pipeline

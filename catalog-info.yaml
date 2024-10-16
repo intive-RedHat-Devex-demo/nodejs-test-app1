@@ -1,0 +1,19 @@
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: nodejs-test-app1
+  description: Create a starter Node.js backend application with a CI/CD pipeline
+  annotations:
+    tektonci/build-namespace: demo-dev
+    janus-idp.io/tekton:  nodejs-test-app1
+    backstage.io/kubernetes-namespace: demo-dev
+    backstage.io/kubernetes-id: nodejs-test-app1
+    argocd/app-name: nodejs-test-app1
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: intive-RedHat-Devex-demo/nodejs-test-app1
+spec:
+  type: api
+  system: intive-idp
+  lifecycle: production
+  owner: intive-RedHat-Devex-demo

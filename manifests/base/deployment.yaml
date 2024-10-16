@@ -1,0 +1,35 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nodejs-test-app1
+  labels:
+    app: nodejs-test-app1
+    argocd/app-name: nodejs-test-app1
+    argocd/app-selector: nodejs-test-app1
+    backstage.io/kubernetes-id: nodejs-test-app1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-test-app1
+  template:
+    metadata:
+      labels:
+        app: nodejs-test-app1
+        app.kubernetes.io/component: backstage
+        backstage.io/kubernetes-id: demo-dev
+        argocd.argoproj.io/instance: nodejs-test-app1
+        argocd/app-name: nodejs-test-app1
+        argocd/app-selector: nodejs-test-app1
+    spec:
+      containers:
+        - name: nodejs-test-app1
+          image: image-registry.openshift-image-registry.svc:5000/demo-dev/nodejs-test-app1:latest
+          ports:
+            - name: http-3000
+              containerPort: 3000
+              protocol: TCP
+          resources:
+            limits:
+              memory: '128Mi'
+              cpu: '500m'

@@ -1,0 +1,52 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: nodejs-test-app1-pipeline
+  namespace: demo-dev
+  labels:
+    type: pipeline
+    janus-idp.io/tekton: nodejs-test-app1
+    backstage.io/kubernetes-id: nodejs-test-app1
+spec:
+  params:
+    - name: source-repo
+      description: source repo that contains the application code
+      type: string
+      default: https://github.com/intive-RedHat-Devex-demo/nodejs-test-app1
+    - name: source-branch
+      description: source branch to build from
+      default: main
+      type: string
+    - name: output-image
+      description: reference of the image that will get created
+      default: image-registry.openshift-image-registry.svc:5000/demo-dev/nodejs-test-app1
+      type: string
+  tasks:
+    - name: git-clone
+      params:
+        - name: url
+          value: $(params.source-repo)
+        - name: revision
+          value: $(params.source-branch)
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: source-folder
+    - name: s2i-nodejs
+      params:
+        - name: VERSION
+          value: latest
+        - name: IMAGE
+          value: $(params.output-image)
+      runAfter:
+        - git-clone
+      taskRef:
+        kind: ClusterTask
+        name: s2i-nodejs
+      workspaces:
+        - name: source
+          workspace: source-folder
+  workspaces:
+    - name: source-folder

@@ -1,0 +1,33 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: nodejs-test-app1-pipeline-run-init
+  namespace: demo-dev
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded  
+  labels:
+    tekton.dev/pipeline: nodejs-test-app1-pipeline
+    janus-idp.io/tekton: nodejs-test-app1
+    backstage.io/kubernetes-id: nodejs-test-app1
+    type: pipeline
+spec:
+  params:
+    - name: source-repo
+      value: 'https://github.com/intive-RedHat-Devex-demo/nodejs-test-app1.git'
+    - name: source-branch
+      value: main
+    - name: output-image
+      value: image-registry.openshift-image-registry.svc:5000/demo-dev/nodejs-test-app1
+  pipelineRef:
+    name: nodejs-test-app1-pipeline
+  # serviceAccountName: pipeline
+  workspaces:
+    - name: source-folder
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

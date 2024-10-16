@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: "nodejs-test-app1"
+  namespace: demo-dev
+spec:
+  destination:
+    namespace: demo-dev
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: manifests/base
+    repoURL: https://github.com/intive-RedHat-Devex-demo/nodejs-test-app1
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
